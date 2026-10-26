@@ -13,7 +13,7 @@
 
   window.addEventListener('mousemove', (e) => {
     // Ambient light follows mouse position smoothly
-    spotlight.style.background = `radial-gradient(circle 460px at ${e.clientX}px ${e.clientY}px, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04), transparent 75%)`;
+    spotlight.style.background = `radial-gradient(circle 460px at ${e.clientX}px ${e.clientY}px, rgba(30, 69, 62, 0.07), rgba(55, 99, 89, 0.035), transparent 75%)`;
   }, { passive: true });
 
   // ==========================================

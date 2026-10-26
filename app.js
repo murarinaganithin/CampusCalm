@@ -624,12 +624,12 @@ function renderMoodChart(logs) {
         {
           label: 'Mood Score (1-5)',
           data: moodScores,
-          borderColor: '#6366f1',
-          backgroundColor: 'rgba(99, 102, 241, 0.14)',
+          borderColor: '#1e453e',
+          backgroundColor: 'rgba(30, 69, 62, 0.12)',
           borderWidth: 3,
           fill: true,
           tension: 0.38,
-          pointBackgroundColor: '#4f46e5',
+          pointBackgroundColor: '#16332f',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 2,
           pointRadius: 4.5,
@@ -638,7 +638,7 @@ function renderMoodChart(logs) {
         {
           label: 'Energy (Scaled 1-5)',
           data: energyScores,
-          borderColor: '#f43f5e',
+          borderColor: '#e07a5f',
           borderWidth: 2,
           borderDash: [5, 5],
           pointRadius: 3,
@@ -669,7 +669,7 @@ function renderMoodChart(logs) {
               return labels[val] || val;
             }
           },
-          grid: { color: '#f1f5f9' }
+          grid: { color: '#f3efe6' }
         },
         x: {
           grid: { display: false }
@@ -1211,12 +1211,12 @@ async function renderCampusCharts() {
           datasets: [{
             label: 'Campus Stress Index (0-100)',
             data: pulse.semesterTimeline.map(t => t.stressIndex),
-            borderColor: '#f43f5e',
-            backgroundColor: 'rgba(244, 63, 94, 0.12)',
+            borderColor: '#e07a5f',
+            backgroundColor: 'rgba(224, 122, 95, 0.12)',
             fill: true,
             tension: 0.4,
             borderWidth: 3,
-            pointBackgroundColor: '#e11d48',
+            pointBackgroundColor: '#cb684e',
             pointRadius: 5
           }]
         },
@@ -1224,7 +1224,7 @@ async function renderCampusCharts() {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            y: { min: 0, max: 100, grid: { color: '#f1f5f9' } },
+            y: { min: 0, max: 100, grid: { color: '#f3efe6' } },
             x: { grid: { display: false } }
           }
         }
@@ -1244,11 +1244,11 @@ async function renderCampusCharts() {
           datasets: [{
             data: top5.map(f => f.count),
             backgroundColor: [
-              '#4f46e5',
-              '#f43f5e',
-              '#8b5cf6',
-              '#06b6d4',
-              '#f59e0b'
+              '#1e453e',
+              '#e07a5f',
+              '#3d5a80',
+              '#cb684e',
+              '#84a98c'
             ],
             borderWidth: 2,
             borderColor: '#ffffff'
