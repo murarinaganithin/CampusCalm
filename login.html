@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Identity Gateway · CampusCalm</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="./style.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              950: '#0a1f1c',
+              900: '#0f2421',
+              800: '#16332f',
+              700: '#1e453e',
+              600: '#28584f',
+              500: '#357065',
+              400: '#48786e',
+              300: '#6b9e91',
+              200: '#a5cfc2',
+              100: '#d4ebe4',
+              50: '#f0f7f5'
+            },
+            coral: {
+              600: '#cb684e',
+              500: '#e07a5f',
+              400: '#e99680',
+              100: '#fbece8'
+            },
+            cream: {
+              50: '#fbfaf6',
+              100: '#f4f1ea',
+              200: '#eae4d5',
+              300: '#d9d0be'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cream-50 text-slate-800 antialiased flex flex-col min-h-screen relative selection:bg-coral-100 selection:text-coral-600">
+
+  <!-- Ambient spotlight glow -->
+  <div id="cursor-ambient-spotlight"></div>
+
+  <!-- TOP HEADER -->
+  <header class="bg-forest-800 text-white shadow-md sticky top-0 z-40 border-b border-forest-700">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      
+      <!-- Logo & Brand -->
+      <a href="index.html" class="flex items-center space-x-3 transition hover:opacity-90">
+        <div class="w-10 h-10 rounded-full bg-coral-500 flex items-center justify-center text-white text-xl shadow-inner font-bold">
+          🌿
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-bold tracking-tight font-display text-white">CampusCalm</h1>
+            <span class="bg-forest-700 text-xs text-cream-100 px-2 py-0.5 rounded-full border border-forest-600">Identity Portal</span>
+          </div>
+          <p class="text-xs text-cream-200/80">Confidential · Zero-PII · Safe Haven</p>
+        </div>
+      </a>
+
+      <!-- Quick Actions -->
+      <div class="flex items-center space-x-3">
+        <button onclick="openCrisisModal()" class="bg-coral-500 hover:bg-coral-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow flex items-center space-x-1.5 transition transform active:scale-95 animate-pulse">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">24/7 Helpline (14416)</span>
+          <span class="sm:hidden">Crisis</span>
+        </button>
+
+        <a href="index.html" class="bg-forest-700 hover:bg-forest-600 text-cream-100 px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-1.5 border border-forest-600 transition">
+          <span class="hidden sm:inline">Continue as Guest</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 flex flex-col justify-center items-center px-4 py-8 relative z-10">
+    
+    <!-- Toast notification -->
+    <div id="toastNotification" class="fixed top-20 z-50 transform -translate-y-10 opacity-0 pointer-events-none transition-all duration-300 bg-forest-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-forest-600 flex items-center space-x-3 text-sm">
+      <div id="toastIcon" class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">✓</div>
+      <div id="toastMessage" class="font-medium">Logging you in...</div>
+    </div>
+
+    <div class="w-full max-w-lg">
+      
+      <!-- Hero Intro Badge -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center space-x-2 bg-cream-100 text-forest-800 px-3 py-1.5 rounded-full text-xs font-medium border border-cream-200 shadow-sm mb-3">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Zero Personal Identifiable Information (PII) Architecture</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold font-display text-forest-900">Welcome to Your Safe Space</h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-md mx-auto">
+          Choose an identity to enter. Students sign in anonymously with nicknames — no college roll numbers, real names, or official emails required.
+        </p>
+      </div>
+
+      <!-- Main Login Card -->
+      <div class="bg-white rounded-2xl border border-forest-100 shadow-xl overflow-hidden tilt-card">
+        
+        <!-- Tab Selector -->
+        <div class="grid grid-cols-3 bg-forest-900/5 border-b border-forest-100 text-xs font-semibold text-center p-1.5 gap-1">
+          <button id="tab-btn-student" onclick="switchLoginTab('student')" class="py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 bg-white text-forest-900 shadow-sm border border-forest-100">
+            <span class="text-base">🐦</span>
+            <span>Student</span>
+          </button>
+          
+          <button id="tab-btn-counselor" onclick="switchLoginTab('counselor')" class="py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 text-slate-600 hover:text-forest-900 hover:bg-white/60">
+            <span class="text-base">👩‍⚕️</span>
+            <span>Counselor</span>
+          </button>
+
+          <button id="tab-btn-dean" onclick="switchLoginTab('dean')" class="py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 text-slate-600 hover:text-forest-900 hover:bg-white/60">
+            <span class="text-base">🏛️</span>
+            <span>Dean / Pulse</span>
+          </button>
+        </div>
+
+        <div class="p-6 sm:p-7">
+
+          <!-- 1. STUDENT LOGIN FORM -->
+          <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4">
+            
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="studentPseudonym" class="block text-xs font-bold text-forest-900 uppercase tracking-wider">
+                  Anonymous Alias / Pseudonym
+                </label>
+                <button type="button" onclick="generateRandomPseudonym()" class="text-xs text-coral-600 hover:text-coral-700 font-semibold flex items-center space-x-1 transition">
+                  <i data-lucide="dices" class="w-3.5 h-3.5"></i>
+                  <span>🎲 Randomize</span>
+                </button>
+              </div>
+
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="studentPseudonym" 
+                  name="pseudonym" 
+                  required
+                  placeholder="e.g. QuietSparrow #24" 
+                  value="QuietSparrow #24"
+                  class="w-full text-sm font-semibold p-3 pl-10 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 transition bg-cream-50/50"
+                >
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="user-check" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Your privacy shield: counselors and peers will know you only by this alias.</p>
+            </div>
+
+            <div>
+              <label for="studentPin" class="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-1.5">
+                4-Digit Security PIN
+              </label>
+              <div class="relative">
+                <input 
+                  type="password" 
+                  id="studentPin" 
+                  name="pin" 
+                  required
+                  maxlength="6"
+                  placeholder="••••" 
+                  value="1234"
+                  class="w-full text-sm font-semibold p-3 pl-10 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 transition bg-cream-50/50 tracking-widest"
+                >
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="lock" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Default demo PIN is <code class="bg-slate-100 px-1 py-0.5 rounded text-forest-700 font-bold">1234</code></p>
+            </div>
+
+            <!-- Consent Toggle -->
+            <div class="p-3 bg-cream-100/70 rounded-xl border border-cream-200 flex items-start space-x-3 text-xs">
+              <input type="checkbox" id="studentConsent" checked class="mt-0.5 h-4 w-4 text-forest-600 rounded border-slate-300 focus:ring-forest-500">
+              <label for="studentConsent" class="text-slate-700 leading-snug cursor-pointer">
+                <strong class="text-forest-900">Consent-Gated Telemetry:</strong> Allow campus counselors to view your anonymous 14-day mood score graph during appointments.
+                <span class="block text-[11px] text-slate-500 mt-0.5">Your journal reflections remain strictly AES-256 encrypted and inaccessible to anyone.</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-forest-800 hover:bg-forest-900 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition transform active:scale-[0.99] flex items-center justify-center space-x-2 text-sm">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+              <span>Enter CampusCalm Safely</span>
+            </button>
+
+            <!-- Quick Demo Button -->
+            <div class="relative py-2">
+              <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+              <div class="relative flex justify-center text-[10px] uppercase"><span class="bg-white px-2 text-slate-400 font-bold">Or instant 1-tap demo</span></div>
+            </div>
+
+            <button type="button" onclick="quickLoginDemo('student')" class="w-full bg-cream-100 hover:bg-cream-200 text-forest-900 border border-cream-300 font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-between text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="text-base">🐦</span>
+                <div class="text-left">
+                  <div class="font-bold">Log in as QuietSparrow #24</div>
+                  <div class="text-[10px] text-slate-500">Pre-seeded with 14-day moods & midterms reflection</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-forest-700"></i>
+            </button>
+          </form>
+
+          <!-- 2. COUNSELOR LOGIN FORM -->
+          <form id="counselorLoginForm" onsubmit="handleCounselorLogin(event)" class="space-y-4 hidden">
+            
+            <div class="p-3 bg-forest-50 rounded-xl border border-forest-200 text-xs text-forest-800">
+              <strong>Counselor Portal:</strong> Access booked student slots, private chat threads, and consent-gated telemetry curves.
+            </div>
+
+            <div>
+              <label for="counselorSelect" class="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-1.5">
+                Select Counselor Identity
+              </label>
+              <div class="relative">
+                <select id="counselorSelect" class="w-full text-sm font-semibold p-3 pl-10 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 transition bg-cream-50/50">
+                  <option value="Dr. Ananya Sharma">Dr. Ananya Sharma, Ph.D. (Senior Clinical Psychologist)</option>
+                  <option value="Dr. Rajesh Iyer">Dr. Rajesh Iyer (Student Wellness Counselor)</option>
+                  <option value="Sister Mary">Sister Mary (Campus Chaplain & Peer Support)</option>
+                </select>
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="counselorPin" class="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-1.5">
+                Staff Security PIN
+              </label>
+              <div class="relative">
+                <input 
+                  type="password" 
+                  id="counselorPin" 
+                  required
+                  placeholder="••••" 
+                  value="1234"
+                  class="w-full text-sm font-semibold p-3 pl-10 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 transition bg-cream-50/50 tracking-widest"
+                >
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="key" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Default demo PIN is <code class="bg-slate-100 px-1 py-0.5 rounded text-forest-700 font-bold">1234</code></p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-forest-800 hover:bg-forest-900 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition transform active:scale-[0.99] flex items-center justify-center space-x-2 text-sm">
+              <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i>
+              <span>Access Counselor Desk</span>
+            </button>
+
+            <!-- Quick Demo Button -->
+            <button type="button" onclick="quickLoginDemo('counselor')" class="w-full bg-cream-100 hover:bg-cream-200 text-forest-900 border border-cream-300 font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-between text-xs mt-3">
+              <div class="flex items-center space-x-2">
+                <span class="text-base">👩‍⚕️</span>
+                <div class="text-left">
+                  <div class="font-bold">Instant Login as Dr. Ananya Sharma</div>
+                  <div class="text-[10px] text-slate-500">View student appointments & mood charts</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-forest-700"></i>
+            </button>
+          </form>
+
+          <!-- 3. DEAN / CAMPUS PULSE LOGIN FORM -->
+          <form id="deanLoginForm" onsubmit="handleDeanLogin(event)" class="space-y-4 hidden">
+            
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900">
+              <strong>Campus Authority View:</strong> Macro-level aggregated student stress telemetry and exam-cycle intelligence. Zero PII is ever visible.
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-1.5">
+                Authority Role
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  disabled 
+                  value="Dean of Student Welfare / Welfare Committee" 
+                  class="w-full text-sm font-semibold p-3 pl-10 rounded-xl border border-slate-200 bg-slate-100 text-slate-700 cursor-not-allowed"
+                >
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="landmark" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="deanPin" class="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-1.5">
+                Administrative Passcode
+              </label>
+              <div class="relative">
+                <input 
+                  type="password" 
+                  id="deanPin" 
+                  required
+                  placeholder="••••" 
+                  value="1234"
+                  class="w-full text-sm font-semibold p-3 pl-10 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 transition bg-cream-50/50 tracking-widest"
+                >
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <i data-lucide="shield" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Default demo passcode is <code class="bg-slate-100 px-1 py-0.5 rounded text-forest-700 font-bold">1234</code></p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-forest-800 hover:bg-forest-900 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition transform active:scale-[0.99] flex items-center justify-center space-x-2 text-sm">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-400"></i>
+              <span>Enter Campus Pulse Analytics</span>
+            </button>
+
+            <!-- Quick Demo Button -->
+            <button type="button" onclick="quickLoginDemo('dean')" class="w-full bg-cream-100 hover:bg-cream-200 text-forest-900 border border-cream-300 font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-between text-xs mt-3">
+              <div class="flex items-center space-x-2">
+                <span class="text-base">🏛️</span>
+                <div class="text-left">
+                  <div class="font-bold">Instant Login as Dean of Student Welfare</div>
+                  <div class="text-[10px] text-slate-500">View campus stress heatmap & exam trends</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-forest-700"></i>
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+
+      <!-- Trust Badges Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 text-center">
+        <div class="p-3 bg-white/80 rounded-xl border border-forest-100 shadow-sm">
+          <div class="text-lg mb-1">🛡️</div>
+          <div class="text-xs font-bold text-forest-900">Zero PII</div>
+          <div class="text-[10px] text-slate-500">No roll numbers</div>
+        </div>
+
+        <div class="p-3 bg-white/80 rounded-xl border border-forest-100 shadow-sm">
+          <div class="text-lg mb-1">🔒</div>
+          <div class="text-xs font-bold text-forest-900">AES-256</div>
+          <div class="text-[10px] text-slate-500">Encrypted journals</div>
+        </div>
+
+        <div class="p-3 bg-white/80 rounded-xl border border-forest-100 shadow-sm">
+          <div class="text-lg mb-1">🤝</div>
+          <div class="text-xs font-bold text-forest-900">Consent First</div>
+          <div class="text-[10px] text-slate-500">You control data</div>
+        </div>
+
+        <div class="p-3 bg-white/80 rounded-xl border border-forest-100 shadow-sm">
+          <div class="text-lg mb-1">🆘</div>
+          <div class="text-xs font-bold text-forest-900">24/7 Lifeline</div>
+          <div class="text-[10px] text-slate-500">Tele-MANAS 14416</div>
+        </div>
+      </div>
+
+      <!-- Emergency Helpline Footnote -->
+      <div class="mt-6 p-3.5 bg-coral-50/70 rounded-xl border border-coral-200 text-xs text-slate-700 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-coral-600 font-bold">🚨 Urgent Support:</span>
+          <span>Free 24/7 National Mental Health Helpline</span>
+        </div>
+        <a href="tel:14416" class="font-bold text-coral-600 hover:underline flex items-center space-x-1">
+          <span>Call 14416</span>
+          <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- CRISIS MODAL -->
+  <div id="crisisModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-950/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border-2 border-coral-400">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2 text-coral-600">
+          <i data-lucide="shield-alert" class="w-6 h-6"></i>
+          <h3 class="text-lg font-bold font-display">Campus & National Crisis Helplines</h3>
+        </div>
+        <button onclick="closeCrisisModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-3 text-xs sm:text-sm">
+        <div class="p-3.5 bg-coral-50 rounded-xl border border-coral-200">
+          <div class="font-bold text-coral-700 text-sm">Tele-MANAS (Govt. of India)</div>
+          <div class="text-slate-600 text-xs mt-0.5">24/7 Comprehensive Mental Health Service · Multi-lingual · Free</div>
+          <a href="tel:14416" class="mt-2 inline-flex items-center space-x-1.5 bg-coral-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>Call 14416 (Toll-Free)</span>
+          </a>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+          <div class="font-bold text-slate-800 text-sm">KIRAN Helpline</div>
+          <div class="text-slate-600 text-xs mt-0.5">Ministry of Social Justice 24/7 Mental Health Hotline</div>
+          <a href="tel:18005990019" class="mt-2 inline-flex items-center space-x-1.5 bg-forest-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>1800-599-0019</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-5 text-right">
+        <button onclick="closeCrisisModal()" class="bg-forest-800 text-white px-4 py-2 rounded-lg text-xs font-semibold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-forest-950 text-cream-200 text-xs py-4 text-center border-t border-forest-800">
+    <p>CampusCalm · Privacy-Preserving University Mental Health Companion · GitHub Pages Static Ready</p>
+  </footer>
+
+  <!-- Page Logic Script -->
+  <script>
+    // Lucide initialization
+    if (window.lucide) window.lucide.createIcons();
+
+    // Random Pseudonym generator
+    const ADJECTIVES = ['Calm', 'Quiet', 'Serene', 'Gentle', 'Mindful', 'Resilient', 'Hopeful', 'Steady', 'Pondering', 'Curious', 'Brave', 'Kind'];
+    const NOUNS = ['Sparrow', 'River', 'Otter', 'Pine', 'Falcon', 'Cedar', 'Panda', 'Koala', 'Willow', 'Breeze', 'Meadow', 'Horizon'];
+
+    function generateRandomPseudonym() {
+      const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+      const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+      const num = Math.floor(10 + Math.random() * 89);
+      const name = `${adj}${noun} #${num}`;
+      const input = document.getElementById('studentPseudonym');
+      if (input) {
+        input.value = name;
+        input.classList.add('ring-2', 'ring-forest-500');
+        setTimeout(() => input.classList.remove('ring-2', 'ring-forest-500'), 500);
+      }
+    }
+
+    // Tab switcher
+    function switchLoginTab(tab) {
+      const btnStudent = document.getElementById('tab-btn-student');
+      const btnCounselor = document.getElementById('tab-btn-counselor');
+      const btnDean = document.getElementById('tab-btn-dean');
+
+      const formStudent = document.getElementById('studentLoginForm');
+      const formCounselor = document.getElementById('counselorLoginForm');
+      const formDean = document.getElementById('deanLoginForm');
+
+      const activeClasses = 'bg-white text-forest-900 shadow-sm border border-forest-100';
+      const inactiveClasses = 'text-slate-600 hover:text-forest-900 hover:bg-white/60';
+
+      [btnStudent, btnCounselor, btnDean].forEach(b => {
+        b.className = 'py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 ' + inactiveClasses;
+      });
+
+      formStudent.classList.add('hidden');
+      formCounselor.classList.add('hidden');
+      formDean.classList.add('hidden');
+
+      if (tab === 'student') {
+        btnStudent.className = 'py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 ' + activeClasses;
+        formStudent.classList.remove('hidden');
+      } else if (tab === 'counselor') {
+        btnCounselor.className = 'py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 ' + activeClasses;
+        formCounselor.classList.remove('hidden');
+      } else if (tab === 'dean') {
+        btnDean.className = 'py-2.5 px-2 rounded-xl transition flex items-center justify-center space-x-1.5 ' + activeClasses;
+        formDean.classList.remove('hidden');
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Toast UI
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+
+      msg.innerText = message;
+      icon.innerText = isSuccess ? '✓' : '⚠️';
+      icon.className = isSuccess 
+        ? 'w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold'
+        : 'w-6 h-6 rounded-full bg-coral-500 flex items-center justify-center text-white text-xs font-bold';
+
+      toast.classList.remove('opacity-0', '-translate-y-10', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+    }
+
+    // Seed database if empty
+    function ensureDatabaseInitialized() {
+      if (!localStorage.getItem('saathi_gh_initialized')) {
+        const defaultMoods = [
+          { id: 1, score: 7, primary_factor: 'Academics', tags: 'Exams,Study', note: 'Studied with friends in library', created_at: new Date(Date.now() - 6 * 86400000).toISOString() },
+          { id: 2, score: 5, primary_factor: 'Hostel', tags: 'Noise,Mess Food', note: 'Hostel room was very noisy', created_at: new Date(Date.now() - 5 * 86400000).toISOString() },
+          { id: 3, score: 4, primary_factor: 'Attendance', tags: 'Attendance,Professors', note: 'Attendance dropped below 75% in Math', created_at: new Date(Date.now() - 4 * 86400000).toISOString() },
+          { id: 4, score: 6, primary_factor: 'Social', tags: 'Friends,Club', note: 'Attended robotics club meeting', created_at: new Date(Date.now() - 3 * 86400000).toISOString() },
+          { id: 5, score: 5, primary_factor: 'Sleep', tags: 'Sleep,Screen Time', note: 'Woke up tired after late assignment', created_at: new Date(Date.now() - 2 * 86400000).toISOString() },
+          { id: 6, score: 6, primary_factor: 'Personal', tags: 'Family,Exercise', note: 'Evening walk near campus lake', created_at: new Date(Date.now() - 1 * 86400000).toISOString() },
+          { id: 7, score: 8, primary_factor: 'Academics', tags: 'Presentation,Project', note: 'Project presentation went very well!', created_at: new Date().toISOString() }
+        ];
+
+        const defaultJournals = [
+          {
+            id: 1,
+            title: 'Navigating the Wednesday Pressure Spike',
+            encrypted_content: 'Midterms are coming up in two weeks. Feeling the pressure build up in the hostel.',
+            tags: 'Exams,Midterms,Hostel',
+            sentiment_score: 5,
+            created_at: new Date(Date.now() - 2 * 86400000).toISOString()
+          }
+        ];
+
+        const defaultCounselors = [
+          { id: 1, name: 'Dr. Ananya Sharma', title: 'Senior Clinical Psychologist', available_days: 'Mon - Fri', available_time: '10:00 AM - 4:00 PM', avatar_emoji: '👩‍⚕️' },
+          { id: 2, name: 'Dr. Rajesh Iyer', title: 'Student Wellness Counselor', available_days: 'Tue - Sat', available_time: '11:00 AM - 5:00 PM', avatar_emoji: '👨‍⚕️' },
+          { id: 3, name: 'Sister Mary', title: 'Campus Chaplain & Peer Support', available_days: 'Daily', available_time: '2:00 PM - 7:00 PM', avatar_emoji: '🌸' }
+        ];
+
+        const defaultAppointments = [
+          {
+            id: 1,
+            counselor_id: 1,
+            counselor_name: 'Dr. Ananya Sharma, Ph.D.',
+            student_pseudonym: 'QuietSparrow #24',
+            date: 'Tomorrow, 3:00 PM',
+            time: '15:00',
+            topic: 'Exam anxiety & sleep schedule alignment',
+            status: 'confirmed',
+            shared_mood_snapshot: 1
+          }
+        ];
+
+        const defaultMessages = {
+          1: [
+            { id: 1, sender_id: 2, sender_name: 'Dr. Ananya Sharma', message: 'Hello QuietSparrow! Looking forward to our chat. Remember, this space is 100% confidential.' }
+          ]
+        };
+
+        localStorage.setItem('saathi_gh_moods', JSON.stringify(defaultMoods));
+        localStorage.setItem('saathi_gh_journals', JSON.stringify(defaultJournals));
+        localStorage.setItem('saathi_gh_counselors', JSON.stringify(defaultCounselors));
+        localStorage.setItem('saathi_gh_appointments', JSON.stringify(defaultAppointments));
+        localStorage.setItem('saathi_gh_messages', JSON.stringify(defaultMessages));
+        localStorage.setItem('saathi_gh_initialized', 'true');
+      }
+    }
+
+    // Handle Student Login
+    function handleStudentLogin(e) {
+      e.preventDefault();
+      ensureDatabaseInitialized();
+      const pseudonym = document.getElementById('studentPseudonym').value.trim() || 'QuietSparrow #24';
+      const consent = document.getElementById('studentConsent').checked ? 1 : 0;
+
+      const user = {
+        id: pseudonym === 'QuietSparrow #24' ? 1 : Date.now(),
+        pseudonym: pseudonym,
+        role: 'student',
+        consent_share_mood: consent
+      };
+
+      localStorage.setItem('saathi_gh_user', JSON.stringify(user));
+      localStorage.setItem('saathi_token', 'mock-gh-token-' + Date.now());
+
+      showToast(`Welcome back, ${pseudonym}! Entering CampusCalm...`);
+      setTimeout(() => {
+        window.location.href = 'index.html?tab=track';
+      }, 700);
+    }
+
+    // Handle Counselor Login
+    function handleCounselorLogin(e) {
+      e.preventDefault();
+      ensureDatabaseInitialized();
+      const counselorName = document.getElementById('counselorSelect').value;
+
+      const user = {
+        id: 99,
+        pseudonym: counselorName,
+        role: 'counselor',
+        consent_share_mood: 1
+      };
+
+      localStorage.setItem('saathi_gh_user', JSON.stringify(user));
+      localStorage.setItem('saathi_token', 'mock-gh-token-counselor');
+
+      showToast(`Welcome, ${counselorName}! Opening Counselor Desk...`);
+      setTimeout(() => {
+        window.location.href = 'index.html?tab=connect';
+      }, 700);
+    }
+
+    // Handle Dean / Admin Login
+    function handleDeanLogin(e) {
+      e.preventDefault();
+      ensureDatabaseInitialized();
+
+      const user = {
+        id: 101,
+        pseudonym: 'Dean of Student Welfare',
+        role: 'dean',
+        consent_share_mood: 1
+      };
+
+      localStorage.setItem('saathi_gh_user', JSON.stringify(user));
+      localStorage.setItem('saathi_token', 'mock-gh-token-dean');
+
+      showToast(`Authenticated as Dean of Student Welfare. Loading Campus Pulse...`);
+      setTimeout(() => {
+        window.location.href = 'index.html?tab=campus';
+      }, 700);
+    }
+
+    // Quick 1-tap demo logins
+    function quickLoginDemo(role) {
+      ensureDatabaseInitialized();
+      if (role === 'counselor') {
+        const user = { id: 99, pseudonym: 'Dr. Ananya Sharma', role: 'counselor', consent_share_mood: 1 };
+        localStorage.setItem('saathi_gh_user', JSON.stringify(user));
+        localStorage.setItem('saathi_token', 'mock-gh-token-counselor');
+        showToast('Entering as Dr. Ananya Sharma (Lead Psychologist)...');
+        setTimeout(() => window.location.href = 'index.html?tab=connect', 600);
+      } else if (role === 'dean') {
+        const user = { id: 101, pseudonym: 'Dean of Student Welfare', role: 'dean', consent_share_mood: 1 };
+        localStorage.setItem('saathi_gh_user', JSON.stringify(user));
+        localStorage.setItem('saathi_token', 'mock-gh-token-dean');
+        showToast('Entering Campus Pulse Analytics View...');
+        setTimeout(() => window.location.href = 'index.html?tab=campus', 600);
+      } else {
+        const user = { id: 1, pseudonym: 'QuietSparrow #24', role: 'student', consent_share_mood: 1 };
+        localStorage.setItem('saathi_gh_user', JSON.stringify(user));
+        localStorage.setItem('saathi_token', 'mock-gh-token-student');
+        showToast('Welcome, QuietSparrow #24! Loading sample moods & journal...');
+        setTimeout(() => window.location.href = 'index.html?tab=track', 600);
+      }
+    }
+
+    // Crisis Modal handlers
+    function openCrisisModal() {
+      document.getElementById('crisisModal').classList.remove('hidden');
+    }
+    function closeCrisisModal() {
+      document.getElementById('crisisModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

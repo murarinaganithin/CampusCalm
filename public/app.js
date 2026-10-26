@@ -361,9 +361,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.lucide) window.lucide.createIcons();
   await initUserSession();
   setupInitialUI();
+
+  // Check if a specific tab was requested via URL query (?tab=track|write|calm|connect|campus)
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedTab = urlParams.get('tab');
+  if (requestedTab && ['track', 'write', 'calm', 'connect', 'campus'].includes(requestedTab)) {
+    switchTab(requestedTab);
+  }
 });
 
 async function initUserSession() {
+  // 1. Check for stored user session from login portal or previous session
+  const storedUser = localStorage.getItem('saathi_gh_user');
+  if (storedUser) {
+    try {
+      currentUser = JSON.parse(storedUser);
+      currentToken = localStorage.getItem('saathi_token') || 'mock-gh-token';
+      updateUserUI();
+      await loadAllData();
+      return;
+    } catch (e) {
+      console.warn('Could not restore stored user:', e);
+    }
+  }
+
   if (currentToken) {
     try {
       const res = await fetch(`${API_BASE}/auth/me`, {
@@ -393,6 +414,7 @@ async function initUserSession() {
       currentToken = data.token;
       currentUser = data.user;
       localStorage.setItem('saathi_token', currentToken);
+      localStorage.setItem('saathi_gh_user', JSON.stringify(currentUser));
       updateUserUI();
       loadAllData();
       return;
@@ -405,6 +427,11 @@ async function initUserSession() {
   await generateFreshAnonymousStudent(false);
 }
 
+function logoutToLogin() {
+  localStorage.removeItem('saathi_token');
+  window.location.href = 'login.html';
+}
+
 function updateUserUI() {
   if (!currentUser) return;
   const nameEl = document.getElementById('userPseudonymDisplay');
@@ -415,10 +442,16 @@ function updateUserUI() {
 
   if (nameEl) nameEl.innerText = currentUser.pseudonym;
   if (roleEl) {
-    roleEl.innerText = currentUser.role === 'counselor' ? 'Counselor Staff' : 'Student (Anonymous)';
+    if (currentUser.role === 'counselor') {
+      roleEl.innerText = 'Counselor Staff';
+    } else if (currentUser.role === 'dean' || currentUser.role === 'admin') {
+      roleEl.innerText = 'Dean / Authority';
+    } else {
+      roleEl.innerText = 'Student (Anonymous)';
+    }
   }
   if (modalLabel) {
-    modalLabel.innerText = `${currentUser.pseudonym} (${currentUser.role})`;
+    modalLabel.innerText = `${currentUser.pseudonym} (${currentUser.role || 'student'})`;
   }
   if (consentToggle) {
     consentToggle.checked = Boolean(currentUser.consent_share_mood);
@@ -429,7 +462,13 @@ function updateUserUI() {
 
   const avatar = document.getElementById('userAvatarEmoji');
   if (avatar) {
-    avatar.innerText = currentUser.role === 'counselor' ? '👩‍⚕️' : '🐦';
+    if (currentUser.role === 'counselor') {
+      avatar.innerText = '👩‍⚕️';
+    } else if (currentUser.role === 'dean' || currentUser.role === 'admin') {
+      avatar.innerText = '🏛️';
+    } else {
+      avatar.innerText = '🐦';
+    }
   }
 }
 
