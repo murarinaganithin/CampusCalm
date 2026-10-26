@@ -371,64 +371,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initUserSession() {
-  // 1. Check for stored user session from login portal or previous session
+  const isLoggedOut = localStorage.getItem('saathi_logged_out');
   const storedUser = localStorage.getItem('saathi_gh_user');
-  if (storedUser) {
-    try {
-      currentUser = JSON.parse(storedUser);
-      currentToken = localStorage.getItem('saathi_token') || 'mock-gh-token';
-      updateUserUI();
-      await loadAllData();
-      return;
-    } catch (e) {
-      console.warn('Could not restore stored user:', e);
-    }
+  const token = localStorage.getItem('saathi_token');
+
+  // If user has explicitly logged out or has no credentials, redirect to login portal
+  if (isLoggedOut === 'true' || !storedUser || !token) {
+    console.log('No active authenticated session found. Redirecting to login portal...');
+    window.location.replace('login.html');
+    return;
   }
 
-  if (currentToken) {
-    try {
-      const res = await fetch(`${API_BASE}/auth/me`, {
-        headers: { 'Authorization': `Bearer ${currentToken}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        currentUser = data.user;
-        updateUserUI();
-        loadAllData();
-        return;
-      }
-    } catch (e) {
-      console.warn('Session check failed:', e);
-    }
-  }
-
-  // Auto-login as default demo student QuietSparrow #24 for rich instant experience
   try {
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pseudonym: 'QuietSparrow #24', pin: '1234' })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem('saathi_token', currentToken);
-      localStorage.setItem('saathi_gh_user', JSON.stringify(currentUser));
-      updateUserUI();
-      loadAllData();
-      return;
-    }
+    currentUser = JSON.parse(storedUser);
+    currentToken = token;
+    updateUserUI();
+    await loadAllData();
+    return;
   } catch (e) {
-    console.warn('Default demo login error:', e);
+    console.warn('Could not restore stored user:', e);
+    window.location.replace('login.html');
+    return;
   }
-
-  // Fallback: create random anonymous user
-  await generateFreshAnonymousStudent(false);
 }
 
 function logoutToLogin() {
+  localStorage.setItem('saathi_logged_out', 'true');
   localStorage.removeItem('saathi_token');
+  localStorage.removeItem('saathi_gh_user');
   window.location.href = 'login.html';
 }
 
@@ -1339,7 +1309,9 @@ async function switchRoleDemo(role) {
         const data = await res.json();
         currentToken = data.token;
         currentUser = data.user;
+        localStorage.removeItem('saathi_logged_out');
         localStorage.setItem('saathi_token', currentToken);
+        localStorage.setItem('saathi_gh_user', JSON.stringify(currentUser));
         updateUserUI();
         await loadAllData();
         switchTab('connect');
@@ -1360,7 +1332,9 @@ async function switchRoleDemo(role) {
         const data = await res.json();
         currentToken = data.token;
         currentUser = data.user;
+        localStorage.removeItem('saathi_logged_out');
         localStorage.setItem('saathi_token', currentToken);
+        localStorage.setItem('saathi_gh_user', JSON.stringify(currentUser));
         updateUserUI();
         await loadAllData();
         switchTab('track');
@@ -1383,7 +1357,9 @@ async function generateFreshAnonymousStudent(promptAlert = true) {
       const data = await res.json();
       currentToken = data.token;
       currentUser = data.user;
+      localStorage.removeItem('saathi_logged_out');
       localStorage.setItem('saathi_token', currentToken);
+      localStorage.setItem('saathi_gh_user', JSON.stringify(currentUser));
       updateUserUI();
       await loadAllData();
       closeProfileModal();
