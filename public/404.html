@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found · CampusCalm</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="./style.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              950: '#0a1f1c',
+              900: '#0f2421',
+              800: '#16332f',
+              700: '#1e453e',
+              600: '#28584f',
+              500: '#357065',
+              400: '#48786e',
+              300: '#6b9e91',
+              200: '#a5cfc2',
+              100: '#d4ebe4',
+              50: '#f0f7f5'
+            },
+            coral: {
+              600: '#cb684e',
+              500: '#e07a5f',
+              400: '#e99680',
+              100: '#fbece8'
+            },
+            cream: {
+              50: '#fbfaf6',
+              100: '#f4f1ea',
+              200: '#eae4d5',
+              300: '#d9d0be'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cream-50 text-slate-800 antialiased flex flex-col min-h-screen relative selection:bg-coral-100 selection:text-coral-600">
+
+  <!-- Ambient spotlight glow -->
+  <div id="cursor-ambient-spotlight"></div>
+
+  <!-- TOP HEADER -->
+  <header class="bg-forest-800 text-white shadow-md sticky top-0 z-40 border-b border-forest-700">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <a href="login.html" class="flex items-center space-x-3 transition hover:opacity-90">
+        <div class="w-10 h-10 rounded-full bg-coral-500 flex items-center justify-center text-white text-xl shadow-inner font-bold">
+          🌿
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight font-display text-white">CampusCalm</h1>
+          <p class="text-xs text-cream-200/80">Campus Mental Health & Wellness Companion</p>
+        </div>
+      </a>
+
+      <a href="login.html" class="bg-forest-700 hover:bg-forest-600 text-cream-100 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 border border-forest-600 transition">
+        <span>Go to Login</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN 404 CONTENT -->
+  <main class="flex-1 flex flex-col justify-center items-center px-4 py-12 relative z-10 text-center">
+    <div class="max-w-md w-full bg-white rounded-3xl p-8 border border-forest-100 shadow-xl tilt-card">
+      
+      <div class="w-16 h-16 rounded-2xl bg-coral-100 text-coral-600 flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+        🧭
+      </div>
+
+      <span class="inline-block px-3 py-1 bg-cream-100 text-forest-800 text-xs font-bold rounded-full border border-cream-200 mb-3">
+        Page Relocated
+      </span>
+
+      <h2 class="text-2xl font-bold font-display text-forest-900 mb-2">Finding Your Way Back</h2>
+      <p class="text-sm text-slate-600 mb-6">
+        The repository was recently updated to <strong>CampusCalm</strong>. If you came from an older bookmark or link, we'll guide you right to the login portal.
+      </p>
+
+      <div class="p-3 bg-forest-50 rounded-xl border border-forest-200 text-xs text-forest-800 mb-6 flex items-center justify-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        <span id="countdownText">Redirecting to login portal in 3 seconds...</span>
+      </div>
+
+      <div class="space-y-2">
+        <a href="login.html" class="w-full bg-forest-800 hover:bg-forest-900 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center space-x-2 text-sm">
+          <i data-lucide="log-in" class="w-4 h-4 text-emerald-400"></i>
+          <span>Open Login & Identity Portal</span>
+        </a>
+
+        <a href="index.html" class="w-full bg-cream-100 hover:bg-cream-200 text-forest-900 font-semibold py-2.5 px-4 rounded-xl border border-cream-300 transition flex items-center justify-center space-x-2 text-xs">
+          <i data-lucide="home" class="w-4 h-4 text-forest-600"></i>
+          <span>CampusCalm Home</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="bg-forest-950 text-cream-200 text-xs py-4 text-center border-t border-forest-800">
+    <p>CampusCalm · Privacy-Preserving University Mental Health Companion</p>
+  </footer>
+
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Auto-redirect after 3 seconds
+    let secondsLeft = 3;
+    const countdownEl = document.getElementById('countdownText');
+    const interval = setInterval(() => {
+      secondsLeft--;
+      if (countdownEl) {
+        countdownEl.innerText = `Redirecting to login portal in ${secondsLeft} second${secondsLeft === 1 ? '' : 's'}...`;
+      }
+      if (secondsLeft <= 0) {
+        clearInterval(interval);
+        window.location.href = 'login.html';
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

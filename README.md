@@ -2,6 +2,10 @@
 > *Infinity Hacks 2k25 · Theme 4 · Problem 16*
 > **One calm, private space to check in, write, unwind, and reach a counselor when it helps.**
 
+### 🌐 Live GitHub Pages Links
+- **Login & Onboarding Portal:** [https://murarinaganithin.github.io/CampusCalm/login.html](https://murarinaganithin.github.io/CampusCalm/login.html)
+- **Main Application:** [https://murarinaganithin.github.io/CampusCalm/](https://murarinaganithin.github.io/CampusCalm/)
+
 ---
 
 ## 🌟 Executive Overview
