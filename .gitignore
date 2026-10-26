@@ -1,0 +1,4 @@
+node_modules/
+saathi.db
+.env
+.DS_Store

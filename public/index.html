@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saathi (साथी) · Campus Mental Health & Wellness Companion</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              950: '#090d16',
+              900: '#0f172a',
+              800: '#1e1b4b',
+              700: '#312e81',
+              600: '#4338ca',
+              500: '#4f46e5',
+              400: '#6366f1',
+              300: '#818cf8',
+              200: '#c7d2fe',
+              100: '#e0e7ff',
+              50: '#eef2ff'
+            },
+            coral: {
+              600: '#e11d48',
+              500: '#f43f5e',
+              400: '#fb7185',
+              100: '#ffe4e6'
+            },
+            cream: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-cream-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+  <!-- TOP HEADER -->
+  <header class="bg-forest-800 text-white shadow-md sticky top-0 z-40 border-b border-forest-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      
+      <!-- Logo & Brand -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('track')">
+        <div class="w-10 h-10 rounded-full bg-coral-500 flex items-center justify-center text-white text-xl shadow-inner font-bold">
+          🌿
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-bold tracking-tight font-display text-white">Saathi <span class="text-xs font-normal text-cream-200">साथी</span></h1>
+            <span class="bg-forest-700 text-xs text-cream-100 px-2 py-0.5 rounded-full border border-forest-600">Campus Companion</span>
+          </div>
+          <p class="text-xs text-cream-200/80">Private · Anonymous by default · Built for campus life</p>
+        </div>
+      </div>
+
+      <!-- User Chip & Quick Action Bar -->
+      <div class="flex items-center space-x-3">
+        
+        <!-- Emergency Crisis Trigger Button -->
+        <button onclick="openCrisisModal()" class="bg-coral-500 hover:bg-coral-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow flex items-center space-x-1.5 transition transform active:scale-95 animate-pulse">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">24/7 Helpline (14416)</span>
+          <span class="sm:hidden">Crisis</span>
+        </button>
+
+        <!-- Current User Pseudonym Chip -->
+        <div class="bg-forest-700/80 hover:bg-forest-700 text-cream-100 px-3 py-1.5 rounded-lg border border-forest-600 flex items-center space-x-2 text-xs transition cursor-pointer" onclick="openProfileModal()">
+          <span id="userAvatarEmoji" class="text-sm">🐦</span>
+          <div>
+            <div id="userPseudonymDisplay" class="font-semibold text-white">QuietSparrow #24</div>
+            <div id="userRoleBadge" class="text-[10px] text-cream-200">Student (Anonymous)</div>
+          </div>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-cream-200"></i>
+        </div>
+
+        <!-- Role / Demo Identity Switcher -->
+        <button onclick="openProfileModal()" class="bg-forest-600 hover:bg-forest-500 text-white p-2 rounded-lg text-xs flex items-center" title="Switch User Identity">
+          <i data-lucide="users" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- MAIN NAVIGATION TABS -->
+    <nav class="bg-forest-900/90 border-t border-forest-700/60 px-4">
+      <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-6 overflow-x-auto py-1.5 text-xs sm:text-sm font-medium">
+        <button onclick="switchTab('track')" id="tab-btn-track" class="nav-tab active-tab flex items-center space-x-2 px-3 py-1.5 rounded-md text-white bg-forest-700/90 transition">
+          <i data-lucide="activity" class="w-4 h-4 text-coral-500"></i>
+          <span>Track Mood</span>
+        </button>
+
+        <button onclick="switchTab('write')" id="tab-btn-write" class="nav-tab flex items-center space-x-2 px-3 py-1.5 rounded-md text-cream-200 hover:text-white hover:bg-forest-800 transition">
+          <i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i>
+          <span>Anonymous Journal</span>
+        </button>
+
+        <button onclick="switchTab('calm')" id="tab-btn-calm" class="nav-tab flex items-center space-x-2 px-3 py-1.5 rounded-md text-cream-200 hover:text-white hover:bg-forest-800 transition">
+          <i data-lucide="wind" class="w-4 h-4 text-sky-400"></i>
+          <span>Calm Toolkit</span>
+        </button>
+
+        <button onclick="switchTab('connect')" id="tab-btn-connect" class="nav-tab flex items-center space-x-2 px-3 py-1.5 rounded-md text-cream-200 hover:text-white hover:bg-forest-800 transition">
+          <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-400"></i>
+          <span>Connect Counselors</span>
+        </button>
+
+        <button onclick="switchTab('campus')" id="tab-btn-campus" class="nav-tab flex items-center space-x-2 px-3 py-1.5 rounded-md text-cream-200 hover:text-white hover:bg-forest-800 transition">
+          <i data-lucide="bar-chart-2" class="w-4 h-4 text-purple-400"></i>
+          <span>Campus Pulse</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- CONTENT CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+
+    <!-- EARLY WARNING NUDGE BANNER (Slides: "After several low-mood days the app invites the student to reach out") -->
+    <div id="earlyWarningBanner" class="hidden mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start space-x-3">
+          <div class="p-1.5 bg-amber-100 rounded-full text-amber-700 mt-0.5">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-amber-900">Gentle Reminder: You don't have to carry this alone</h4>
+            <p class="text-xs text-amber-800 mt-0.5">We noticed consecutive low-energy or high-stress check-ins over your recent logs. College pressure is real, but small breathers help.</p>
+            <div class="mt-2.5 flex items-center space-x-3">
+              <button onclick="switchTab('calm')" class="text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white px-3 py-1 rounded shadow-sm transition">
+                Take a 3-Min Breathing Pause
+              </button>
+              <button onclick="switchTab('connect')" class="text-xs font-medium text-amber-900 hover:underline">
+                Confidential Counselor Check-in →
+              </button>
+            </div>
+          </div>
+        </div>
+        <button onclick="dismissEarlyWarning()" class="text-amber-500 hover:text-amber-700 p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: TRACK (MOOD CHECK-IN & 14-DAY TREND) -->
+    <!-- ========================================== -->
+    <section id="tab-track" class="tab-content space-y-6">
+      
+      <!-- Hero check-in card -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-cream-100 gap-2">
+          <div>
+            <h2 class="text-2xl font-bold font-display text-forest-800">Daily Mood Check-in</h2>
+            <p class="text-xs text-slate-500">How is campus life treating you today? Takes 10 seconds, zero real name attached.</p>
+          </div>
+          <div class="flex items-center space-x-2 bg-cream-100 px-3 py-1.5 rounded-full text-xs text-forest-700 font-medium">
+            <i data-lucide="flame" class="w-4 h-4 text-coral-500"></i>
+            <span>Current Streak: <strong id="streakCountBadge" class="text-coral-600">5 Days</strong></span>
+          </div>
+        </div>
+
+        <!-- 5-Point Mood Buttons -->
+        <div class="mt-6">
+          <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Select your current state:</label>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="moodSelectorGroup">
+            
+            <div onclick="selectMood(1)" data-mood="1" class="mood-option border-2 border-slate-200 rounded-xl p-3.5 text-center bg-cream-50 hover:bg-white transition flex flex-col items-center">
+              <span class="text-3xl mb-1">🌧️</span>
+              <span class="text-xs font-bold text-slate-800">Exhausted</span>
+              <span class="text-[10px] text-slate-500">Drained & Down</span>
+            </div>
+
+            <div onclick="selectMood(2)" data-mood="2" class="mood-option border-2 border-slate-200 rounded-xl p-3.5 text-center bg-cream-50 hover:bg-white transition flex flex-col items-center">
+              <span class="text-3xl mb-1">☁️</span>
+              <span class="text-xs font-bold text-slate-800">Anxious</span>
+              <span class="text-[10px] text-slate-500">Tense / Racing Mind</span>
+            </div>
+
+            <div onclick="selectMood(3)" data-mood="3" class="mood-option border-2 border-slate-200 rounded-xl p-3.5 text-center bg-cream-50 hover:bg-white transition flex flex-col items-center">
+              <span class="text-3xl mb-1">⛅</span>
+              <span class="text-xs font-bold text-slate-800">Neutral</span>
+              <span class="text-[10px] text-slate-500">Getting By / Meh</span>
+            </div>
+
+            <div onclick="selectMood(4)" data-mood="4" class="mood-option border-2 border-forest-600 bg-forest-50/50 rounded-xl p-3.5 text-center selected transition flex flex-col items-center">
+              <span class="text-3xl mb-1">🌿</span>
+              <span class="text-xs font-bold text-slate-800">Calm</span>
+              <span class="text-[10px] text-slate-500">Steady & Grounded</span>
+            </div>
+
+            <div onclick="selectMood(5)" data-mood="5" class="mood-option border-2 border-slate-200 rounded-xl p-3.5 text-center bg-cream-50 hover:bg-white transition flex flex-col items-center">
+              <span class="text-3xl mb-1">☀️</span>
+              <span class="text-xs font-bold text-slate-800">Joyful</span>
+              <span class="text-[10px] text-slate-500">Energized & Light</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Campus Stress Factors Checklist -->
+        <div class="mt-6">
+          <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">What factors influenced your day?</label>
+          <div class="flex flex-wrap gap-2" id="factorPillsGroup">
+            <button type="button" onclick="toggleFactor(this, 'Exams / Deadlines')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">📚 Exams / Deadlines</button>
+            <button type="button" onclick="toggleFactor(this, 'Hostel Life')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">🏢 Hostel / Roommates</button>
+            <button type="button" onclick="toggleFactor(this, 'Sleep Deprivation')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">💤 Sleep Deprivation</button>
+            <button type="button" onclick="toggleFactor(this, 'Attendance Rules')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">⏳ 75% Attendance Pressure</button>
+            <button type="button" onclick="toggleFactor(this, 'Placement / Career')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">💼 Placements / Internships</button>
+            <button type="button" onclick="toggleFactor(this, 'Social Isolation')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">👥 Social / Loneliness</button>
+            <button type="button" onclick="toggleFactor(this, 'Peace & Nature')" class="factor-pill text-xs px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:bg-cream-100 transition">🍃 Peace & Recharge</button>
+          </div>
+        </div>
+
+        <!-- Sliders: Energy & Sleep -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 bg-cream-50 p-4 rounded-xl border border-cream-200">
+          <div>
+            <div class="flex justify-between items-center text-xs font-medium text-slate-700 mb-1">
+              <span>⚡ Energy Level:</span>
+              <span id="energyValText" class="font-bold text-forest-700">7 / 10</span>
+            </div>
+            <input type="range" id="energySlider" min="1" max="10" value="7" class="w-full accent-forest-700" oninput="document.getElementById('energyValText').innerText = this.value + ' / 10'">
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center text-xs font-medium text-slate-700 mb-1">
+              <span>🛏️ Last Night's Sleep:</span>
+              <span id="sleepValText" class="font-bold text-forest-700">7.0 hours</span>
+            </div>
+            <input type="range" id="sleepSlider" min="3" max="11" step="0.5" value="7" class="w-full accent-forest-700" oninput="document.getElementById('sleepValText').innerText = parseFloat(this.value).toFixed(1) + ' hours'">
+          </div>
+        </div>
+
+        <!-- Optional One-line thought -->
+        <div class="mt-4">
+          <input type="text" id="quickMoodNote" placeholder="Optional one-line note (e.g. 'Lab submission done, walking to canteen')" class="w-full text-xs p-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 bg-white">
+        </div>
+
+        <div class="mt-5 flex items-center justify-between">
+          <span class="text-[11px] text-slate-400 flex items-center space-x-1">
+            <i data-lucide="lock" class="w-3 h-3"></i>
+            <span>Recorded anonymously. Never linked to university roll numbers.</span>
+          </span>
+          <button onclick="submitMoodLog()" class="bg-forest-800 hover:bg-forest-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-md transition flex items-center space-x-2">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Log Check-in</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 14-DAY MOOD TREND VISUALIZATION -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-cream-100 gap-2">
+          <div>
+            <h3 class="text-lg font-bold font-display text-forest-800">14-Day Wellness Curve</h3>
+            <p class="text-xs text-slate-500">Visualizing your emotional trajectory over the semester cycle</p>
+          </div>
+          <div class="flex items-center space-x-4 text-xs">
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-forest-600"></span>
+              <span class="text-slate-600">Mood Score (1-5)</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-coral-500"></span>
+              <span class="text-slate-600">Energy (Scale /2)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Overview Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200 text-center">
+            <div class="text-[11px] text-slate-500 uppercase tracking-wide">14-Day Average</div>
+            <div id="statAvgMood" class="text-xl font-bold text-forest-800 mt-0.5">3.6 <span class="text-xs text-slate-400 font-normal">/ 5</span></div>
+            <div class="text-[10px] text-emerald-600 font-medium">Grounded Zone</div>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200 text-center">
+            <div class="text-[11px] text-slate-500 uppercase tracking-wide">Avg Sleep</div>
+            <div id="statAvgSleep" class="text-xl font-bold text-forest-800 mt-0.5">6.8 <span class="text-xs text-slate-400 font-normal">hrs</span></div>
+            <div class="text-[10px] text-slate-500">Recommended: 7-8h</div>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200 text-center">
+            <div class="text-[11px] text-slate-500 uppercase tracking-wide">Primary Stressor</div>
+            <div id="statTopStressor" class="text-sm font-bold text-coral-600 truncate mt-1">Exams / Deadlines</div>
+            <div class="text-[10px] text-slate-400">42% of logs</div>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200 text-center">
+            <div class="text-[11px] text-slate-500 uppercase tracking-wide">Early Warning</div>
+            <div id="statNudgeStatus" class="text-sm font-bold text-emerald-700 mt-1">Steady ✓</div>
+            <div class="text-[10px] text-slate-400">No low streak</div>
+          </div>
+        </div>
+
+        <!-- Chart Canvas -->
+        <div class="mt-6 relative h-64 w-full">
+          <canvas id="moodChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- TAB 2: WRITE (ANONYMOUS ENCRYPTED JOURNAL) -->
+    <!-- ========================================== -->
+    <section id="tab-write" class="tab-content hidden space-y-6">
+      
+      <!-- Privacy & Encryption Header Banner -->
+      <div class="bg-forest-800 text-cream-100 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-start space-x-3.5">
+          <div class="p-2 bg-forest-700 rounded-xl text-emerald-300">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold font-display text-white">Anonymous Encrypted Sanctuary</h2>
+            <p class="text-xs text-cream-200/90 max-w-xl mt-0.5">
+              Entries are encrypted with AES-256 before writing to database. Your pseudonym is never linked to your student ID. Counselors cannot view journal entries even if you opt into mood trends.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 text-xs bg-forest-900/80 px-3.5 py-2 rounded-xl border border-forest-700">
+          <i data-lucide="lock" class="w-4 h-4 text-emerald-400"></i>
+          <span>AES-256-CBC Active</span>
+        </div>
+      </div>
+
+      <!-- Journal Editor -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        
+        <!-- Writing Prompts Selector -->
+        <div class="mb-4">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Need a writing prompt?</span>
+          <div class="flex flex-wrap gap-2 mt-1.5">
+            <button onclick="applyPrompt('Pre-Exam Brain Dump: What is my biggest worry right now, and what is one thing in my direct control?')" class="text-xs bg-cream-100 hover:bg-cream-200 text-forest-800 px-3 py-1 rounded-lg border border-cream-200 transition">
+              📝 Pre-Exam Brain Dump
+            </button>
+            <button onclick="applyPrompt('Hostel & Roommate Friction: What drained my patience today, and how can I create emotional distance?')" class="text-xs bg-cream-100 hover:bg-cream-200 text-forest-800 px-3 py-1 rounded-lg border border-cream-200 transition">
+              🏢 Hostel Solitude
+            </button>
+            <button onclick="applyPrompt('Micro-Grateful: Name three tiny moments today that felt okay (e.g., warm tea, sunlight, quiet corner).')" class="text-xs bg-cream-100 hover:bg-cream-200 text-forest-800 px-3 py-1 rounded-lg border border-cream-200 transition">
+              🌱 Three Small Wins
+            </button>
+            <button onclick="applyPrompt('')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-lg transition">
+              Clear Prompt
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <input type="text" id="journalTitle" placeholder="Reflection Title (e.g. Navigating the Wednesday Pressure Spike)" class="w-full text-base font-semibold p-3.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600">
+          </div>
+
+          <div>
+            <textarea id="journalContent" rows="7" placeholder="Write freely without self-censorship. This space belongs solely to you..." class="w-full text-sm p-4 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-600 leading-relaxed"></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs text-slate-500">Tags:</span>
+              <input type="text" id="journalTags" placeholder="e.g. Midterms, Sleep, Hostel" class="text-xs px-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-forest-600 w-64">
+            </div>
+
+            <button onclick="saveJournalEntry()" class="bg-forest-800 hover:bg-forest-700 text-white font-semibold text-xs px-6 py-3 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+              <i data-lucide="lock" class="w-4 h-4 text-emerald-300"></i>
+              <span>Encrypt & Save Reflection</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- AI REFLECTION & SENTIMENT RESPONSE BOX (Slides: "Sentiment analysis of journal entries suggests a fitting resource") -->
+        <div id="aiReflectionContainer" class="hidden mt-6 bg-forest-50 border border-forest-200 p-4 rounded-xl">
+          <div class="flex items-start space-x-3">
+            <div class="p-2 bg-forest-700 rounded-lg text-white mt-0.5">
+              <i data-lucide="bot" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-grow">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-forest-800">Saathi AI Companion Reflection</span>
+                <span id="aiSentimentBadge" class="text-[11px] font-semibold bg-forest-200 text-forest-800 px-2.5 py-0.5 rounded-full">Reflective</span>
+              </div>
+              <p id="aiReflectionText" class="text-xs text-forest-900 mt-1 leading-relaxed">
+                Take a breath. Writing is the first step toward clearing your mind.
+              </p>
+              <div id="aiSuggestedResourceBox" class="mt-2.5 flex items-center space-x-2 text-xs text-forest-700">
+                <span>Recommended tool:</span>
+                <button onclick="switchTab('calm')" class="font-bold text-coral-600 underline hover:text-coral-700 flex items-center space-x-1">
+                  <span>Open Box Breathing</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PAST JOURNAL REFLECTIONS LIST -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <div class="flex items-center justify-between pb-4 border-b border-cream-100">
+          <div>
+            <h3 class="text-lg font-bold font-display text-forest-800">Your Decrypted Past Entries</h3>
+            <p class="text-xs text-slate-500">Stored on database in encrypted cipher blobs; safely decrypted for your active session</p>
+          </div>
+          <button onclick="loadJournals()" class="text-xs text-forest-700 hover:text-forest-900 flex items-center space-x-1 font-medium">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+
+        <div id="journalsListContainer" class="mt-4 space-y-4">
+          <!-- Populated by JavaScript -->
+          <div class="text-center py-8 text-slate-400 text-xs">
+            Loading your encrypted reflections...
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- TAB 3: CALM (STRESS MANAGEMENT & AUDIO)   -->
+    <!-- ========================================== -->
+    <section id="tab-calm" class="tab-content hidden space-y-6">
+      
+      <!-- Box Breathing Interactive Bubble -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200 text-center">
+        <div class="max-w-xl mx-auto">
+          <div class="inline-flex items-center space-x-2 bg-cream-100 text-forest-800 text-xs px-3 py-1 rounded-full mb-3">
+            <i data-lucide="wind" class="w-3.5 h-3.5 text-coral-500"></i>
+            <span>Parasympathetic Nervous Reset</span>
+          </div>
+          <h2 class="text-2xl font-bold font-display text-forest-800">Animated Breathing Pacer</h2>
+          <p class="text-xs text-slate-500 mt-1">Slow your heart rate and ease pre-exam adrenaline surges in under 2 minutes.</p>
+
+          <!-- Pattern selector -->
+          <div class="flex justify-center space-x-2 mt-4">
+            <button onclick="setBreathingPattern('box')" id="btnPatternBox" class="text-xs font-semibold px-4 py-1.5 rounded-lg bg-forest-800 text-white shadow-sm transition">
+              Box Breathing (4-4-4-4)
+            </button>
+            <button onclick="setBreathingPattern('478')" id="btnPattern478" class="text-xs font-semibold px-4 py-1.5 rounded-lg bg-cream-100 text-slate-700 hover:bg-cream-200 transition">
+              4-7-8 Deep Sleep
+            </button>
+          </div>
+        </div>
+
+        <!-- Breathing Animated Visual Bubble -->
+        <div class="py-10">
+          <div class="breathing-bubble-container">
+            <div class="breathing-outer-ring"></div>
+            <div id="breathingBubble" class="breathing-circle">
+              <div>
+                <div id="breathingInstruction" class="text-sm font-bold tracking-wider">Ready</div>
+                <div id="breathingSeconds" class="text-2xl font-extrabold mt-1">4s</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="flex justify-center items-center space-x-4">
+          <button onclick="toggleBreathing()" id="breathingStartBtn" class="bg-forest-800 hover:bg-forest-700 text-white font-semibold text-xs px-6 py-2.5 rounded-xl shadow-md transition flex items-center space-x-2">
+            <i data-lucide="play" class="w-4 h-4"></i>
+            <span id="breathingBtnText">Start Breathing Session</span>
+          </button>
+          <button onclick="resetBreathing()" class="bg-cream-100 hover:bg-cream-200 text-slate-700 text-xs font-medium px-4 py-2.5 rounded-xl transition">
+            Reset
+          </button>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-400">
+          Cycles Completed: <span id="breathingCyclesCompleted" class="font-bold text-forest-700">0</span>
+        </div>
+      </div>
+
+      <!-- Synthesized Ambient Soundscapes (Zero external files needed) -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-cream-100 gap-2">
+          <div>
+            <h3 class="text-lg font-bold font-display text-forest-800">Campus Ambient Soundscapes</h3>
+            <p class="text-xs text-slate-500">Synthesized offline via Web Audio API · Mask hostel noise and hallway chatter</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="text-xs text-slate-500">Volume:</span>
+            <input type="range" min="0" max="1" step="0.05" value="0.5" class="w-24 accent-forest-700" oninput="saathiAudio.setVolume(this.value)">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5">
+          
+          <div onclick="playAmbientTrack('rain')" id="soundCard-rain" class="sound-card border-2 border-slate-200 hover:border-forest-600 rounded-xl p-4 text-center cursor-pointer transition bg-cream-50 hover:bg-white">
+            <div class="text-3xl mb-2">🌧️</div>
+            <div class="text-xs font-bold text-forest-900">Gentle Rain</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Pink noise raindrops</div>
+          </div>
+
+          <div onclick="playAmbientTrack('ocean')" id="soundCard-ocean" class="sound-card border-2 border-slate-200 hover:border-forest-600 rounded-xl p-4 text-center cursor-pointer transition bg-cream-50 hover:bg-white">
+            <div class="text-3xl mb-2">🌊</div>
+            <div class="text-xs font-bold text-forest-900">Ocean Waves</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Rhythmic tidal swell</div>
+          </div>
+
+          <div onclick="playAmbientTrack('forest')" id="soundCard-forest" class="sound-card border-2 border-slate-200 hover:border-forest-600 rounded-xl p-4 text-center cursor-pointer transition bg-cream-50 hover:bg-white">
+            <div class="text-3xl mb-2">🍃</div>
+            <div class="text-xs font-bold text-forest-900">Forest Wind</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Gentle canopy rustle</div>
+          </div>
+
+          <div onclick="playAmbientTrack('lofi')" id="soundCard-lofi" class="sound-card border-2 border-slate-200 hover:border-forest-600 rounded-xl p-4 text-center cursor-pointer transition bg-cream-50 hover:bg-white">
+            <div class="text-3xl mb-2">☕</div>
+            <div class="text-xs font-bold text-forest-900">Warm Lo-fi Drone</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">528Hz Meditative calm</div>
+          </div>
+
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <button onclick="stopAmbientAudio()" id="btnStopAudio" class="hidden text-xs text-coral-600 font-semibold hover:underline flex items-center space-x-1">
+            <i data-lucide="square" class="w-3.5 h-3.5"></i>
+            <span>Stop Soundscape</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5-4-3-2-1 Sensory Grounding Tool -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <h3 class="text-lg font-bold font-display text-forest-800">5-4-3-2-1 Grounding Practice</h3>
+        <p class="text-xs text-slate-500">Engage your physical senses to interrupt severe anxiety or impending panic attacks.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-4 text-xs">
+          
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1 mb-1">
+              <span class="w-5 h-5 rounded-full bg-forest-700 text-white flex items-center justify-center text-[10px]">5</span>
+              <span>SEE</span>
+            </div>
+            <p class="text-slate-600 text-[11px]">Notice 5 distinct objects in your room (desk, pen, wall color, window, shadow).</p>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1 mb-1">
+              <span class="w-5 h-5 rounded-full bg-forest-700 text-white flex items-center justify-center text-[10px]">4</span>
+              <span>TOUCH</span>
+            </div>
+            <p class="text-slate-600 text-[11px]">Feel 4 physical textures (chair fabric, cold bottle, smooth page, feet on floor).</p>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1 mb-1">
+              <span class="w-5 h-5 rounded-full bg-forest-700 text-white flex items-center justify-center text-[10px]">3</span>
+              <span>HEAR</span>
+            </div>
+            <p class="text-slate-600 text-[11px]">Identify 3 sounds (fan hum, distant voices outside, birds or corridor steps).</p>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1 mb-1">
+              <span class="w-5 h-5 rounded-full bg-forest-700 text-white flex items-center justify-center text-[10px]">2</span>
+              <span>SMELL</span>
+            </div>
+            <p class="text-slate-600 text-[11px]">Detect 2 scents (fresh pencil shavings, tea, soap, rain on earth).</p>
+          </div>
+
+          <div class="bg-cream-50 p-3.5 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1 mb-1">
+              <span class="w-5 h-5 rounded-full bg-forest-700 text-white flex items-center justify-center text-[10px]">1</span>
+              <span>TASTE</span>
+            </div>
+            <p class="text-slate-600 text-[11px]">Take a conscious sip of cool water and feel the temperature swallow down.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Curated Campus Exam Stress Guides -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <h3 class="text-lg font-bold font-display text-forest-800 mb-4">Exam & Hostel Survival Guides</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-coral-600">Exam Stress</span>
+            <h4 class="text-sm font-bold text-forest-800 mt-1">Pre-Exam Mind Freeze Protocol</h4>
+            <p class="text-xs text-slate-600 mt-1">When your mind blanks 10 minutes before the paper: relax your tongue, take slow diaphragmatic breaths, and avoid last-second frantic notes.</p>
+          </div>
+
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-forest-700">Hostel Life</span>
+            <h4 class="text-sm font-bold text-forest-800 mt-1">Solitude Reclamation</h4>
+            <p class="text-xs text-slate-600 mt-1">Overstimulated in 3-sharing rooms? Find quiet campus nooks: top library tiers, sunrise track walks, or noise-cancelling pink noise focus.</p>
+          </div>
+
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">Burnout</span>
+            <h4 class="text-sm font-bold text-forest-800 mt-1">The 75% Attendance Trap</h4>
+            <p class="text-xs text-slate-600 mt-1">Avoid letting attendance guilt spiral into absenteeism. Approach course mentors early with honest health notes; burnout is physiological.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- TAB 4: CONNECT (COUNSELOR & CONSENT)       -->
+    <!-- ========================================== -->
+    <section id="tab-connect" class="tab-content hidden space-y-6">
+      
+      <!-- Privacy & Consent Control Center (Slide 5: "Consent before sharing") -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-cream-100 gap-4">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-forest-700">Privacy & Consent First</span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-full">Zero Forced Telemetry</span>
+            </div>
+            <h2 class="text-2xl font-bold font-display text-forest-800 mt-0.5">Confidential Counselor Connection</h2>
+            <p class="text-xs text-slate-500 max-w-xl">
+              Meet qualified campus psychologists under full pseudonymity. You control exactly what information is shared.
+            </p>
+          </div>
+
+          <!-- Consent Switch Box -->
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200 flex items-center space-x-3">
+            <div>
+              <div class="text-xs font-bold text-forest-900">Share 14-Day Mood Trend with Counselor</div>
+              <div class="text-[10px] text-slate-500">Only scores & factor tags. Journal text is NEVER shared.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="consentShareToggle" onchange="updateConsentSetting(this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-cream-50 rounded-lg text-xs text-slate-600 flex items-center space-x-2">
+          <i data-lucide="info" class="w-4 h-4 text-forest-700 flex-shrink-0"></i>
+          <span>Students sign in with a nickname. Counselors know you only by your chosen pseudonym (<strong id="consentDisplayPseudonym">QuietSparrow #24</strong>).</span>
+        </div>
+      </div>
+
+      <!-- Campus Counselor Directory -->
+      <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <h3 class="text-lg font-bold font-display text-forest-800 mb-1">Campus Counseling Staff</h3>
+        <p class="text-xs text-slate-500 mb-5">Select a counselor to book a confidential 45-minute anonymous session</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5" id="counselorsDirectoryList">
+          <!-- Populated by JS -->
+          <div class="text-center py-8 text-slate-400 text-xs">Loading counselor directory...</div>
+        </div>
+      </div>
+
+      <!-- Student's Scheduled Appointments -->
+      <div id="studentAppointmentsSection" class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <h3 class="text-lg font-bold font-display text-forest-800 mb-1">Your Booked Sessions</h3>
+        <p class="text-xs text-slate-500 mb-4">Confidential appointments scheduled under your pseudonym</p>
+
+        <div id="studentAppointmentsList" class="space-y-3">
+          <!-- Populated by JS -->
+          <div class="text-center py-6 text-slate-400 text-xs">No active bookings found.</div>
+        </div>
+      </div>
+
+      <!-- Counselor Portal Section (Slide 6: "Counselor view: Consent switch and anonymized campus trends") -->
+      <div id="counselorPortalSection" class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-forest-600/30">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-cream-100 gap-2">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-forest-700">Counselor Practice Desk</span>
+              <span class="bg-forest-100 text-forest-800 text-[10px] font-semibold px-2 py-0.5 rounded-full">Confidential Care Portal</span>
+            </div>
+            <h3 class="text-lg font-bold font-display text-forest-800 mt-0.5">Incoming Student Consultations</h3>
+            <p class="text-xs text-slate-500">Managing anonymous student appointments with strict consent boundaries</p>
+          </div>
+          <button onclick="loadCounselorPortalAppointments()" class="text-xs text-forest-700 hover:text-forest-900 font-semibold flex items-center space-x-1">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Refresh Portal</span>
+          </button>
+        </div>
+
+        <div id="counselorPortalAppointmentsList" class="mt-4 space-y-3">
+          <div class="text-center py-6 text-slate-400 text-xs">Loading counselor portal sessions...</div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- TAB 5: CAMPUS PULSE (AUTHORITY VIEW)       -->
+    <!-- ========================================== -->
+    <section id="tab-campus" class="tab-content hidden space-y-6">
+      
+      <!-- Slide 5 & 6 requirement: "The authority view shows anonymized campus-level trends, never individual entries." -->
+      <div class="bg-forest-800 text-white rounded-2xl p-6 shadow-sm border border-forest-700">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <span class="bg-forest-700 text-cream-200 text-xs px-2.5 py-0.5 rounded-full border border-forest-600 font-medium">Campus Wellness Intelligence</span>
+            <h2 class="text-2xl font-bold font-display text-white mt-1">Campus Pulse & Academic Stress Heatmap</h2>
+            <p class="text-xs text-cream-200/90 max-w-2xl mt-0.5">
+              Aggregated, anonymized macro-level insights for student welfare committees, wardens, and counselors. Empowers the university to organize workshops and quiet hours during peak distress weeks without violating individual privacy.
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-cream-200/70 block">Active Student Check-ins</span>
+            <span id="campusTotalCheckins" class="text-3xl font-extrabold text-coral-500">1,420</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authority View: Semester Wave & Stressors Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Academic Cycle Stress Wave -->
+        <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+          <div class="pb-3 border-b border-cream-100">
+            <h3 class="text-base font-bold font-display text-forest-800">Academic Semester Stress Curve</h3>
+            <p class="text-xs text-slate-500">Correlating examination schedules with student well-being indices</p>
+          </div>
+          <div class="mt-4 relative h-64">
+            <canvas id="campusSemesterChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Campus Stress Factors Distribution -->
+        <div class="tilt-card bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+          <div class="pb-3 border-b border-cream-100">
+            <h3 class="text-base font-bold font-display text-forest-800">Leading Campus Stress Triggers</h3>
+            <p class="text-xs text-slate-500">Aggregated factor percentage reported across all student check-ins</p>
+          </div>
+          <div class="mt-4 relative h-64 flex items-center justify-center">
+            <canvas id="campusFactorsChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Actionable Campus Administrative Recommendations -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-cream-200">
+        <h3 class="text-base font-bold font-display text-forest-800 mb-3">Campus Action Recommendations (Semester Midterm Wave)</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1.5 mb-1">
+              <i data-lucide="bell" class="w-4 h-4 text-coral-500"></i>
+              <span>Hostel Quiet Hours</span>
+            </div>
+            <p class="text-slate-600">Enforce 11:00 PM quiet corridors during Weeks 8 & 14 to combat the 64% spike in sleep deprivation complaints.</p>
+          </div>
+
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1.5 mb-1">
+              <i data-lucide="coffee" class="w-4 h-4 text-amber-600"></i>
+              <span>Canteen Nutrition Hours</span>
+            </div>
+            <p class="text-slate-600">Extend hostel hot water and herbal tea dispensary hours during midterm study nights.</p>
+          </div>
+
+          <div class="bg-cream-50 p-4 rounded-xl border border-cream-200">
+            <div class="font-bold text-forest-800 flex items-center space-x-1.5 mb-1">
+              <i data-lucide="users" class="w-4 h-4 text-emerald-600"></i>
+              <span>Walk-in Peer Drop-ins</span>
+            </div>
+            <p class="text-slate-600">Offer drop-in mindfulness circles in the campus library quad with zero sign-up sheets or roll lists.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS & OVERLAYS                          -->
+  <!-- ========================================== -->
+
+  <!-- 1. CRISIS SAFETY NET MODAL (Slide 4: "Crisis keywords immediately show helpline numbers, including Tele-MANAS 14416 in India") -->
+  <div id="crisisModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border-t-8 border-coral-500 transform transition-all">
+      
+      <div class="flex items-start space-x-3 pb-3 border-b border-slate-100">
+        <div class="p-2.5 bg-coral-100 text-coral-600 rounded-full flex-shrink-0 animate-bounce">
+          <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold font-display text-slate-900">You Are Not Alone</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Saathi is a peer wellness companion, not a crisis therapist. Immediate, professional support is free, confidential, and ready for you right now.</p>
+        </div>
+      </div>
+
+      <!-- Emergency Hotline Direct Numbers -->
+      <div class="mt-4 space-y-2.5">
+        
+        <div class="bg-coral-50 p-3.5 rounded-xl border border-coral-200 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-coral-500 text-white px-2 py-0.5 rounded-full">National 24/7 Helpline</span>
+            <div class="text-sm font-bold text-slate-900 mt-1">Tele-MANAS (Govt. of India)</div>
+            <div class="text-xs text-slate-600">Toll-free, 24/7, available in 20+ regional languages</div>
+          </div>
+          <a href="tel:14416" class="bg-coral-500 hover:bg-coral-600 text-white font-bold text-xs px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1">
+            <i data-lucide="phone-call" class="w-4 h-4"></i>
+            <span>Call 14416</span>
+          </a>
+        </div>
+
+        <div class="bg-cream-100 p-3.5 rounded-xl border border-cream-200 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-forest-700 text-white px-2 py-0.5 rounded-full">KIRAN Line</span>
+            <div class="text-sm font-bold text-slate-900 mt-1">1800-599-0019</div>
+            <div class="text-xs text-slate-600">Rehabilitation & Mental Health Counseling</div>
+          </div>
+          <a href="tel:18005990019" class="bg-forest-800 hover:bg-forest-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg shadow transition flex items-center space-x-1">
+            <i data-lucide="phone-call" class="w-4 h-4"></i>
+            <span>Call</span>
+          </a>
+        </div>
+
+        <div class="bg-cream-50 p-3 rounded-xl border border-cream-200 flex items-center justify-between text-xs">
+          <div>
+            <span class="font-bold text-slate-800">Campus Emergency Medical Duty</span>
+            <div class="text-[11px] text-slate-500">Internal university emergency line</div>
+          </div>
+          <span class="font-bold text-forest-800 bg-white px-2.5 py-1 rounded border">Ext. 2244</span>
+        </div>
+
+      </div>
+
+      <div class="mt-5 flex items-center justify-between pt-3 border-t border-slate-100">
+        <button onclick="closeCrisisModal(); switchTab('calm');" class="text-xs text-forest-800 font-semibold underline hover:text-forest-900">
+          Try a guided calming breath instead
+        </button>
+        <button onclick="closeCrisisModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-semibold px-4 py-2 rounded-lg transition">
+          I'm Okay, Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 2. BOOK COUNSELOR MODAL -->
+  <div id="bookingModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-lg font-bold font-display text-forest-800">Book Anonymous Session</h3>
+          <p id="bookingCounselorName" class="text-xs text-slate-500">with Dr. Ananya Sharma</p>
+        </div>
+        <button onclick="closeBookingModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="bookingCounselorId">
+
+      <div class="mt-4 space-y-3.5 text-xs">
+        
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Select Consultation Date:</label>
+          <input type="date" id="bookingDate" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-forest-600">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Select Available Time Slot:</label>
+          <select id="bookingSlotTime" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-forest-600 bg-white">
+            <option value="10:00 - 10:45 AM">Morning: 10:00 - 10:45 AM</option>
+            <option value="11:30 - 12:15 PM">Morning: 11:30 - 12:15 PM</option>
+            <option value="15:00 - 15:45 PM" selected>Afternoon: 03:00 - 03:45 PM</option>
+            <option value="17:00 - 17:45 PM">Evening: 05:00 - 05:45 PM</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Session Mode:</label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="border p-2 rounded-lg text-center cursor-pointer hover:bg-cream-50 flex flex-col items-center">
+              <input type="radio" name="sessionType" value="chat" checked class="mb-1 accent-forest-700">
+              <span>💬 Anonymous Chat</span>
+            </label>
+            <label class="border p-2 rounded-lg text-center cursor-pointer hover:bg-cream-50 flex flex-col items-center">
+              <input type="radio" name="sessionType" value="video" class="mb-1 accent-forest-700">
+              <span>📹 Secure Video</span>
+            </label>
+            <label class="border p-2 rounded-lg text-center cursor-pointer hover:bg-cream-50 flex flex-col items-center">
+              <input type="radio" name="sessionType" value="in_person" class="mb-1 accent-forest-700">
+              <span>🏢 Clinic Room</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Brief note on what you'd like to discuss (Optional):</label>
+          <textarea id="bookingNotes" rows="2" placeholder="e.g. Pre-exam anxiety, coping with hostel noise" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-forest-600"></textarea>
+        </div>
+
+        <!-- Consent confirmation -->
+        <div class="p-3 bg-cream-50 rounded-lg border border-cream-200">
+          <label class="flex items-start space-x-2 cursor-pointer">
+            <input type="checkbox" id="bookingMoodConsentCheckbox" checked class="mt-0.5 accent-forest-700">
+            <span class="text-[11px] text-slate-600">
+              Allow counselor to view my 14-day average mood trend graph. (My private journal entries remain strictly locked.)
+            </span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="mt-5 flex items-center justify-end space-x-2">
+        <button onclick="closeBookingModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">Cancel</button>
+        <button onclick="confirmBooking()" class="px-5 py-2 text-xs font-semibold bg-forest-800 hover:bg-forest-700 text-white rounded-lg shadow transition">Confirm Appointment</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 3. CONFIDENTIAL CHAT MODAL -->
+  <div id="chatModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-2xl max-w-lg w-full h-[520px] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Chat Header -->
+      <div class="bg-forest-800 text-white p-4 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-full bg-forest-700 flex items-center justify-center text-sm">💬</div>
+          <div>
+            <h4 id="chatHeaderTitle" class="text-sm font-bold text-white">Confidential Consultation</h4>
+            <p class="text-[10px] text-cream-200">End-to-end encrypted · Logged under pseudonym</p>
+          </div>
+        </div>
+        <button onclick="closeChatModal()" class="text-cream-200 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Messages Thread -->
+      <div id="chatMessagesContainer" class="flex-grow p-4 overflow-y-auto space-y-3 bg-cream-50 text-xs">
+        <div class="text-center py-4 text-slate-400">Loading conversation history...</div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="p-3 bg-white border-t border-slate-200 flex items-center space-x-2 flex-shrink-0">
+        <input type="text" id="chatInputMessage" placeholder="Type a message to your counselor..." class="flex-grow p-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-1 focus:ring-forest-600" onkeydown="if(event.key === 'Enter') sendChatMessage()">
+        <button onclick="sendChatMessage()" class="bg-forest-800 hover:bg-forest-700 text-white p-2.5 rounded-xl shadow transition">
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 4. PROFILE / DEMO IDENTITY SWITCHER MODAL -->
+  <div id="profileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold font-display text-forest-800">Identity & Role Switcher</h3>
+        <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4 text-xs">
+        <div class="p-3 bg-cream-50 rounded-xl border border-cream-200">
+          <div class="font-bold text-forest-900 mb-0.5">Currently Active User:</div>
+          <div id="modalCurrentUserLabel" class="text-sm font-semibold text-coral-600">QuietSparrow #24 (Student)</div>
+          <div class="text-[11px] text-slate-500 mt-1">Zero PII / No roll number required.</div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block font-semibold text-slate-700">Quick Test Switcher:</label>
+          
+          <button onclick="switchRoleDemo('student')" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-forest-600 hover:bg-cream-50 transition flex items-center justify-between">
+            <div>
+              <div class="font-bold text-forest-800">🐦 Anonymous Student Demo</div>
+              <div class="text-[11px] text-slate-500">View mood trends, anonymous diary, & book sessions</div>
+            </div>
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-forest-600"></i>
+          </button>
+
+          <button onclick="switchRoleDemo('counselor')" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-forest-600 hover:bg-cream-50 transition flex items-center justify-between">
+            <div>
+              <div class="font-bold text-forest-800">👩‍⚕️ Counselor Portal (Dr. Ananya Sharma)</div>
+              <div class="text-[11px] text-slate-500">View booked slots and consent-gated student mood charts</div>
+            </div>
+            <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400"></i>
+          </button>
+
+          <button onclick="generateFreshAnonymousStudent()" class="w-full text-left p-3 rounded-xl border border-dashed border-slate-300 hover:border-coral-500 hover:bg-coral-50/40 transition flex items-center justify-between text-coral-600">
+            <div>
+              <div class="font-bold">🎲 Generate New Fresh Anonymous Identity</div>
+              <div class="text-[11px] text-slate-500">Creates a fresh new pseudonym with clean slate</div>
+            </div>
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-5 text-right">
+        <button onclick="closeProfileModal()" class="bg-forest-800 text-white px-4 py-2 rounded-lg text-xs font-semibold">Done</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 5. STUDENT MOOD TELEMETRY MODAL (FOR COUNSELOR VIEW) -->
+  <div id="counselorTrendModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider bg-forest-100 text-forest-800 px-2 py-0.5 rounded-full">Consent-Gated Telemetry</span>
+          <h3 id="trendModalStudentName" class="text-base font-bold font-display text-forest-800 mt-1">Student Mood Trajectory</h3>
+        </div>
+        <button onclick="closeCounselorTrendModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="mt-4">
+        <div id="trendConsentBanner" class="p-3 rounded-xl mb-4 text-xs"></div>
+        <div class="h-60 relative w-full">
+          <canvas id="counselorTrendChart"></canvas>
+        </div>
+        <div class="mt-4 p-3 bg-cream-50 rounded-xl border border-cream-200 text-xs text-slate-600 flex items-start space-x-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <strong>Privacy Enforcement:</strong> Only numerical mood averages and factor categories are shared. Personal journal entries and identity records remain locked under student pseudonym.
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 text-right">
+        <button onclick="closeCounselorTrendModal()" class="bg-forest-800 text-white px-4 py-2 rounded-lg text-xs font-semibold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-forest-900 text-cream-200 text-xs py-6 border-t border-forest-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-base">🌿</span>
+        <span class="font-bold font-display text-white">Saathi (साथी)</span>
+        <span class="text-cream-200/60">· Campus Mental Health & Wellness Companion</span>
+      </div>
+      <div class="text-center sm:text-right text-[11px] text-cream-200/70">
+        <p>Saathi is a peer and wellness support companion, not a medical clinic or licensed psychiatric provider.</p>
+        <p>For urgent mental health emergencies in India, call <strong class="text-white">Tele-MANAS: 14416</strong> or <strong class="text-white">KIRAN: 1800-599-0019</strong>.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="./cursor.js"></script>
+  <script src="./audioEngine.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
