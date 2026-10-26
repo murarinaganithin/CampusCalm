@@ -1,4 +1,4 @@
-// Saathi (साथी) Frontend Application Logic
+// CampusCalm Frontend Application Logic
 
 const isGitHubPages = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
 const API_BASE = '/api';
@@ -10,7 +10,7 @@ const API_BASE = '/api';
 (function setupGitHubPagesMock() {
   if (!isGitHubPages) return;
 
-  console.log('🌿 Saathi: Running in GitHub Pages Client-Side Mode with LocalStorage DB');
+  console.log('🌿 CampusCalm: Running in GitHub Pages Client-Side Mode with LocalStorage DB');
 
   // Seed initial localStorage database if empty
   if (!localStorage.getItem('saathi_gh_initialized')) {
@@ -35,7 +35,7 @@ const API_BASE = '/api';
       {
         id: 1,
         title: 'Surviving the Wednesday Panic Wave',
-        content: 'Midterm week was brutally intense. On Wednesday night I was convinced I was going to blank out on the exam paper. Using the 4-7-8 breathing exercise in Saathi calmed my racing pulse down enough to fall asleep. Wrote this down to remind future me that panic passes.',
+        content: 'Midterm week was brutally intense. On Wednesday night I was convinced I was going to blank out on the exam paper. Using the 4-7-8 breathing exercise in CampusCalm calmed my racing pulse down enough to fall asleep. Wrote this down to remind future me that panic passes.',
         sentiment_tone: 'Reflective',
         tags: ['Midterms', 'Breathing', 'Overcoming Panic'],
         created_at: new Date(Date.now() - 7*86400000).toISOString()

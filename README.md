@@ -1,4 +1,4 @@
-# Saathi (साथी) · Campus Mental Health & Wellness Companion
+# CampusCalm · Campus Mental Health & Wellness Companion
 > *Infinity Hacks 2k25 · Theme 4 · Problem 16*
 > **One calm, private space to check in, write, unwind, and reach a counselor when it helps.**
 
@@ -7,7 +7,7 @@
 ## 🌟 Executive Overview
 University students face continuous pressures: relentless examination schedules, 75% attendance anxiety, hostel friction, and social transition stress. Yet, campus resources are often fragmented and stigmatized, making students hesitant to seek support under their real names or roll numbers.
 
-**Saathi** provides a serene, anonymous, security-first mental health companion engineered specifically for campus life, implementing every requirement from the problem statement and presentation pitch deck:
+**CampusCalm** provides a serene, anonymous, security-first mental health companion engineered specifically for campus life, implementing every requirement from the problem statement and presentation pitch deck:
 - 📊 **Track**: One-tap daily mood check-in with contextual campus factors (Exams, Hostel, Sleep, Attendance) and an interactive 14-day wellness trajectory chart.
 - 📝 **Write**: Anonymous journaling with **AES-256-CBC database encryption**, zero required PII, and an AI sentiment reflection layer.
 - 🚨 **Crisis Safety Net**: Real-time distress keyword scanning with immediate 24/7 crisis helplines including **Tele-MANAS (14416 / 1800-891-4416)** and **KIRAN (1800-599-0019)**.

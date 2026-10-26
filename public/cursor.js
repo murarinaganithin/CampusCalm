@@ -1,5 +1,5 @@
 /**
- * Interactive UI Cursor Engine for Saathi
+ * Interactive UI Cursor Engine for CampusCalm
  * Handles 3D perspective card tilt, dynamic light sheen reflections,
  * ambient background lighting, and magnetic breathing proximity on mouse move.
  * Uses standard clean cursor (no custom tracking circles/dots).

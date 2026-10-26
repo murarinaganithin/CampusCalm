@@ -58,7 +58,7 @@ app.use('/api/resources', resourceRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
-    system: 'Saathi Mental Health & Wellness Companion',
+    system: 'CampusCalm Mental Health & Wellness Companion',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
@@ -84,7 +84,7 @@ async function startServer() {
     await initDb();
     app.listen(PORT, () => {
       console.log(`====================================================`);
-      console.log(`🌿 Saathi (साथी) Campus Mental Health Companion`);
+      console.log(`🌿 CampusCalm Campus Mental Health Companion`);
       console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log(`🔒 AES-256 Journal Encryption Active`);
       console.log(`🚨 Crisis Safety Net Active (Tele-MANAS 14416 / KIRAN)`);

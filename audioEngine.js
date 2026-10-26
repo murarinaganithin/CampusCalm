@@ -1,9 +1,9 @@
 /**
- * Web Audio API Sound Synthesizer for Saathi Calm Toolkit
+ * Web Audio API Sound Synthesizer for CampusCalm Calm Toolkit
  * Generates relaxing soundscapes purely via mathematical audio synthesis.
  * Zero external audio files required — runs 100% offline.
  */
-class SaathiAudioEngine {
+class CampusCalmAudioEngine {
   constructor() {
     this.ctx = null;
     this.currentTrack = null;
@@ -230,4 +230,5 @@ class SaathiAudioEngine {
   }
 }
 
-window.saathiAudio = new SaathiAudioEngine();
+window.saathiAudio = new CampusCalmAudioEngine();
+window.campusCalmAudio = window.saathiAudio;

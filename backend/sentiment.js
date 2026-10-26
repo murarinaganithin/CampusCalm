@@ -1,4 +1,4 @@
-// Sentiment and Crisis Safety Net Engine for Saathi
+// Sentiment and Crisis Safety Net Engine for CampusCalm
 
 const CRISIS_KEYWORDS = [
   'suicide', 'kill myself', 'killing myself', 'end my life', 'ending my life',

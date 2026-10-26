@@ -59,7 +59,7 @@ router.post('/book', authenticateToken, async (req, res) => {
     await runAsync(
       `INSERT INTO messages (appointment_id, sender_id, sender_name, message)
        VALUES (?, ?, ?, ?)`,
-      [result.lastID, 0, 'Saathi Care Desk', greetingText]
+      [result.lastID, 0, 'CampusCalm Care Desk', greetingText]
     );
 
     res.json({
